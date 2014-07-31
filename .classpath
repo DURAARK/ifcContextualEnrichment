@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/WikipEvent/lib/mysql-connector-java-5.1.10-bin.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Downloads/mybatis-3.2.3.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/Jars/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/Jars/jackson-core-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/Jars/jackson-mapper-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/Tools/stanford-ner-2014-01-04/stanford-ner-2014-01-04.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/Tools/stanford-corenlp-full-2014-01-04/stanford-corenlp-3.3.1.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/Tools/stanford-corenlp-full-2014-01-04/stanford-corenlp-3.3.1-models.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/httpclient-4.2.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/httpclient-cache-4.2.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/httpcore-4.2.5.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jackson-annotations-2.3.0.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jackson-core-2.3.3.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jackson-databind-2.3.3.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jcl-over-slf4j-1.7.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jena-arq-2.11.2.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jena-core-2.11.2.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jena-iri-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jena-sdb-1.4.2.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jena-tdb-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/jsonld-java-0.4.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/slf4j-log4j12-1.7.6.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/home/ujwal/Desktop/DURAARK/apache-jena-2.11.2/lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
