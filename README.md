@@ -11,7 +11,7 @@ In order to use the IFC Contextual Enrichment, in connection with the Semantic D
 
 //Using the ifcContextualEnrichment executable.
 
-Eg. : java -jar ifcEnrichment_v2.jar Duplex_A_20110907_optimized.ifc ~/Desktop/ IFCPOSTALADDRESS IFCBUILDING
+     Eg. : java -jar ifcEnrichment_v2.jar Duplex_A_20110907_optimized.ifc ~/Desktop/ IFCPOSTALADDRESS IFCBUILDING
 
      where, the filename is "Duplex_A_20110907_optimized.ifc",
             the absolute path of the output directory is "~/Desktop/", and
