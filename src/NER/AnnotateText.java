@@ -250,55 +250,33 @@ public class AnnotateText {
 
 		String delims = "[ ]+";
 		String[] tokens = output.split(delims);
-		// ArrayList<String> pers = new ArrayList<String>();
 		ArrayList<String> locs = new ArrayList<String>();
-		// ArrayList<String> orgs = new ArrayList<String>();
 
 		for (int i = 0; i < tokens.length - 1; i++) {
 
-			/*
-			 * if (tokens[i+1].toString().equals("PERSON")){
-			 * System.out.println("Found entity (of type PERSON)  :"
-			 * +tokens[i]); pers.add(tokens[i]); } else
-			 */
 			if (tokens[i + 1].toString().equals("LOCATION")) {
-
-				// System.out.println("Found entity (of type LOCATION)  :"
-				// +tokens[i]);
 
 				locs.add(tokens[i]);
 			}
 
-			/*
-			 * else if (tokens[i+1].toString().equals("ORGANIZATION")){
-			 * System.out.println("Found entity (of type ORGANIZATION)  :"
-			 * +tokens[i]); orgs.add(tokens[i]); }
-			 */
 
 		}
 
 		// Converting ArrayList to HashSet to remove duplicates
 
-		// LinkedHashSet<String> listToSetPers = new
-		// LinkedHashSet<String>(pers);
+
 		LinkedHashSet<String> listToSetLocs = new LinkedHashSet<String>(locs);
-		// LinkedHashSet<String> listToSetOrgs = new
-		// LinkedHashSet<String>(orgs);
+	
 
 		// Creating ArrayList without duplicate values
 
-		// List<String> PersWithoutDuplicates = new
-		// ArrayList<String>(listToSetPers);
+	
 		ArrayList<String> LocsWithoutDuplicates = new ArrayList<String>(
 				listToSetLocs);
-		// List<String> OrgsWithoutDuplicates = new
-		// ArrayList<String>(listToSetOrgs);
 
 		// Print the lists containing unique elements
 
-		// System.out.println("Persons:"+PersWithoutDuplicates);
 		System.out.println("Locations:" + LocsWithoutDuplicates);
-		// System.out.println("Organizations:"+OrgsWithoutDuplicates);
 
 		// Pass ArrayList to Query
 
