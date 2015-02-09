@@ -25,8 +25,8 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 
 public class QueryDatabase {
 
-    public static final String USERNAME = null;
-    public static final String PASSWORD = null;
+    public static final String USERNAME = "duraark_select";
+    public static final String PASSWORD = "RHMTGRxwSz6wYnY5";
 
     public List<String> getTermsForEnrichment(String fileInput) {
         List<String> terms = new ArrayList<String>();
