@@ -28,321 +28,314 @@ import edu.stanford.nlp.util.CoreMap;
 
 public class AnnotateText {
 
+	// StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing,
+	// and co-reference resolution
 
-    //StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and co-reference resolution
+	/* Initialize the properties to use with the StanfordCoreNLP */
 
-    /* Initialize the properties to use with the StanfordCoreNLP */
+	public static void initialize() {
 
-    public static void initialize() {
+		System.out.println("Initializing properties.....");
 
-        System.out.println("Initializing properties.....");
+		Properties props = new Properties();
 
-        Properties props = new Properties();
+		props.put("annotators", "tokenize,ssplit,pos,lemma,ner");
+		pipeline = new StanfordCoreNLP(props, true);
 
-        props.put("annotators", "tokenize,ssplit,pos,lemma,ner");
-        pipeline  = new StanfordCoreNLP(props, true);
+	}
 
-    }
-    public static StanfordCoreNLP pipeline;
+	public static StanfordCoreNLP pipeline;
 
+	public static String readFile(String fileName, ArrayList<String> props)
+			throws IOException {
 
+		BufferedReader br = new BufferedReader(new FileReader(fileName));
+		try {
+			StringBuilder sb = new StringBuilder();
 
-    public static	String readFile(String fileName, ArrayList<String>props) throws IOException {
+			// Test Property
+			// props.add("IFCPOSTALADDRESS");
 
-        BufferedReader br = new BufferedReader(new FileReader(fileName));
-        try {
-            StringBuilder sb = new StringBuilder();
+			while (br.ready()) {
+				String line = br.readLine();
 
-            //Test Property
-            //props.add("IFCPOSTALADDRESS");
+				for (String property : props) {
+					if (line.contains(property)) {
+						sb.append(line);
+						sb.append("\n");
+					}
+				}
+			}
+			br.close();
+			return getPOSAnnotations(sb.toString());
 
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return "";
 
-            while(br.ready()) {
-                String line = br.readLine();
+	}
 
-                for(String property:props) {
-                    if(line.contains(property)) {
-                        sb.append(line);
-                        sb.append("\n");
-                    }
-                }
-            }
-            br.close();
-            return getPOSAnnotations(sb.toString());
+	public static void writeRDF(String outputDirectory) {
 
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return "";
+		// For default output in user's home directory.
 
-    }
+		String[] pkgPath = { "ifcEnrichment" };
+		File f = new File(System.getProperty("user.home"));
+		File subDir = f;
+		for (String pkg : pkgPath) {
+			subDir = new File(subDir, pkg);
 
-    public static void writeRDF() {
+		}
 
-        String[] pkgPath = { "ifcEnrichment" };
-        File f = new File(System.getProperty("user.home"));
-        File subDir = f;
-        for (String pkg : pkgPath) {
-            subDir = new File(subDir,pkg);
-        }
+		String txtUI = outputDirectory + "/enrichmentTriples.txt";
+		BufferedReader br = null;
+		String line = "";
+		String splitBy = ",";
 
-        String txtUI = subDir.getAbsoluteFile()+"/results.txt";
-        BufferedReader br = null;
-        String line = "";
-        String splitBy = ",";
+		Writer writer = null;
 
-        Writer writer = null;
+		try {
 
-        try {
+			br = new BufferedReader(new FileReader(txtUI));
 
-            br = new BufferedReader(new FileReader(txtUI));
+			// writer = new BufferedWriter(new OutputStreamWriter(
+			// new
+			// FileOutputStream(subDir.getAbsoluteFile()+"/"+"ifcEnrichment.ttl",true),
+			// "UTF-8"));
 
-            //writer = new BufferedWriter(new OutputStreamWriter(
-            //		new FileOutputStream(subDir.getAbsoluteFile()+"/"+"ifcEnrichment.ttl",true), "UTF-8"));
+			// Initialise counter for Links.
 
+			int linkCounter = 1;
 
+			while ((line = br.readLine()) != null) {
 
-            //Initialise counter for Links.
+				// Split the retrieved results into parts.
 
-            int linkCounter =1;
+				String[] subparts = line.split(splitBy);
+				try {
 
-            while ((line = br.readLine()) != null) {
+					writer = new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream(outputDirectory + "/"
+									+ "enrichmentTriples.ttl", true), "UTF-8"));
 
-                // Split the retrieved results into parts.
+					// Write the prefixes used for the Enrichment Triples file.
 
+					if (linkCounter == 1) {
+						writer.write("@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."
+								+ "\n"
+								+ "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."
+								+ "\n"
+								+ "@prefix vol: <http://purl.org/vol/ns#> ."
+								+ "\n"
+								+ "@prefix xsd: <http://www.w3.org/2001/XMLSchema#> ."
+								+ "\n"
+								+ "@prefix void: <http://rdfs.org/ns/void#> ."
+								+ "\n" + "@prefix : <#> ." + "\n" + "\n" + "\n");
+					}
+
+					// Write the enrichment triples to RDF (.ttl) file.
+
+					if (subparts[5].contains("http")) {
+						writer.write(":" + subparts[1] + " a void:Dataset."
+								+ "\n" + "\t" + ":" + subparts[1]
+								+ "_linkset a void:Linkset;" + "\n" + "\t"
+								+ "\t" + "void:target :" + subparts[1] + ";\n"
+								+ "\t" + "\t" + "rdfs:label \"dataset_id "
+								+ subparts[0] + " resource_id " + subparts[2]
+								+ "\"^^xsd:string.\n");
+						writer.write("<" + subparts[3] + ">" + " " + "<"
+								+ subparts[4] + ">" + " " + "<" + subparts[5]
+								+ ">;" + "\n" + "." + "\n");
+
+					}
+
+					else {
+						writer.write(":" + subparts[1] + " a void:Dataset."
+								+ "\n" + "\t" + ":" + subparts[1]
+								+ "_linkset a void:Linkset;" + "\n" + "\t"
+								+ "\t" + "void:target :" + subparts[1] + ";\n"
+								+ "\t" + "\t" + "rdfs:label \"dataset_id "
+								+ subparts[0] + " resource_id " + subparts[2]
+								+ "\"^^xsd:string.\n");
+						writer.write("<" + subparts[3] + ">" + " " + "<"
+								+ subparts[4] + ">" + " \"" + subparts[5]
+								+ "\"^^xsd:string;\n" + "." + "\n");
+					}
+
+				} catch (IOException ex) {
+				} finally {
+					try {
+						writer.close();
+					} catch (Exception ex) {
+					}
+				}
+
+				// Increment the Counter.
+
+				linkCounter++;
+
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		System.out.println("Location pivots are successfully initialised!");
+	}
+
+	public static String getPOSAnnotations(String content) {
+
+		// create an empty Annotation just with the given text
+		Annotation document = new Annotation(content);
+
+		// run all Annotators on this text
+
+		pipeline.annotate(document);
+		return getAnnotatedDocument(document);
+	}
+
+	/*
+	 * Sets the annotation for a document, which are split for the different
+	 * sentences. The annotations focus on POS, NER, and CO-Reference
+	 * resolution.
+	 */
 
-                String[] subparts = line.split(splitBy);
-                try {
+	private static String getAnnotatedDocument(Annotation annotation) {
+		StringBuffer sb = new StringBuffer();
 
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                                                    new FileOutputStream(subDir.getAbsoluteFile()+"/"+"ifcEnrichment.ttl",true), "UTF-8"));
+		// Gather all the sentences in this document.
 
+		List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
-                    //Write the prefixes used for the Enrichment Triples file.
+		for (CoreMap sentence : sentences) {
 
+			// Traversing the words in the current sentence, a CoreLabel is a
+			// CoreMap with additional token-specific methods
 
-                    if (linkCounter==1) {
-                        writer.write("@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ."+"\n"+
-                                     "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> ."+"\n"+
-                                     "@prefix vol: <http://purl.org/vol/ns#> ."+"\n"+
-                                     "@prefix xsd: < http://www.w3.org/2001/XMLSchema#> ."+"\n"+
-                                     "@prefix void: <http://rdfs.org/ns/void#> ."+"\n"+"\n"+"\n"+"\n");
-                    }
+			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+				String word = token.get(TextAnnotation.class);
+				// String pos = token.get(PartOfSpeechAnnotation.class);
+				String ner = token.get(NamedEntityTagAnnotation.class);
 
-                    //Write the enrichment triples to RDF (.ttl) file.
+				sb.append(word);
+				sb.append(" ");
+				sb.append(ner);
+				sb.append(" ");
+			}
 
-                    if (subparts[5].contains("http")) {
-                        writer.write(":"+subparts[1]+" a void:Dataset;"+"\n"+
-                                     "\t"+"rdfs:label dataset_id "+subparts[0]+"^^xsd:string;\n"+
-                                     "\t"+":"+subparts[1]+"_linkset a void:Linkset;"+"\n"+
-                                     "\t"+"\t"+"void:target :"+subparts[1]+";\n"+
-                                     "\t"+"\t"+"vol:hasLink link_"+linkCounter+";\n"+
-                                     "\t"+"\t"+"\t"+"link_"+linkCounter+" a vol:Link"+";\n"+
-                                     "\t"+"\t"+"\t"+"vol:linksResource "+subparts[3]+";\n"+
-                                     "\t"+"\t"+"\t"+"rdfs:label resource_id "+subparts[2]+"^^xsd:string;\n");
-                        writer.write("<"+subparts[3]+">"+" "+"<"+subparts[4]+">"+" "+"<"+subparts[5]+">;"+"\n"+"."+"\n");
+			sb.append("\n");
+		}
 
-                    }
+		return sb.toString();
+	}
 
-                    else {
-                        writer.write(":"+subparts[1]+" a void:Dataset;"+"\n"+
-                                     "\t"+"rdfs:label dataset_id "+subparts[0]+"^^xsd:string;\n"+
-                                     "\t"+":"+subparts[1]+"_linkset a void:Linkset;"+"\n"+
-                                     "\t"+"\t"+"void:target :"+subparts[1]+";\n"+
-                                     "\t"+"\t"+"vol:hasLink link_"+linkCounter+";\n"+
-                                     "\t"+"\t"+"\t"+"link_"+linkCounter+" a vol:Link"+";\n"+
-                                     "\t"+"\t"+"\t"+"vol:linksResource "+subparts[3]+";\n"+
-                                     "\t"+"\t"+"\t"+"rdfs:label resource_id "+subparts[2]+"^^xsd:string;\n");
-                        writer.write("<"+subparts[3]+">"+" "+"<"+subparts[4]+">"+" "+subparts[5]+"^^xsd:string;\n"+"."+"\n");
-                    }
+	/* Parse for the Named Entities: Persons, Locations, and Organizations. */
 
-                } catch (IOException ex) {
-                } finally {
-                    try {
-                        writer.close();
-                    } catch (Exception ex) {
-                    }
-                }
+	public static void parseForNamedEntities(String output, String directory)
+			throws FileNotFoundException, UnsupportedEncodingException,
+			SQLException {
 
-                //Increment the Link ID.
+		System.out.println("Setting delimiters for IFC file contents.......");
 
-                linkCounter++;
+		String delims = "[ ]+";
+		String[] tokens = output.split(delims);
+		// ArrayList<String> pers = new ArrayList<String>();
+		ArrayList<String> locs = new ArrayList<String>();
+		// ArrayList<String> orgs = new ArrayList<String>();
 
-            }
+		for (int i = 0; i < tokens.length - 1; i++) {
 
+			/*
+			 * if (tokens[i+1].toString().equals("PERSON")){
+			 * System.out.println("Found entity (of type PERSON)  :"
+			 * +tokens[i]); pers.add(tokens[i]); } else
+			 */
+			if (tokens[i + 1].toString().equals("LOCATION")) {
 
+				// System.out.println("Found entity (of type LOCATION)  :"
+				// +tokens[i]);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+				locs.add(tokens[i]);
+			}
 
-        System.out.println("Location pivots are successfully initialised!");
-    }
+			/*
+			 * else if (tokens[i+1].toString().equals("ORGANIZATION")){
+			 * System.out.println("Found entity (of type ORGANIZATION)  :"
+			 * +tokens[i]); orgs.add(tokens[i]); }
+			 */
 
+		}
 
+		// Converting ArrayList to HashSet to remove duplicates
 
+		// LinkedHashSet<String> listToSetPers = new
+		// LinkedHashSet<String>(pers);
+		LinkedHashSet<String> listToSetLocs = new LinkedHashSet<String>(locs);
+		// LinkedHashSet<String> listToSetOrgs = new
+		// LinkedHashSet<String>(orgs);
 
+		// Creating ArrayList without duplicate values
 
-    public static String getPOSAnnotations(String content) {
+		// List<String> PersWithoutDuplicates = new
+		// ArrayList<String>(listToSetPers);
+		ArrayList<String> LocsWithoutDuplicates = new ArrayList<String>(
+				listToSetLocs);
+		// List<String> OrgsWithoutDuplicates = new
+		// ArrayList<String>(listToSetOrgs);
 
-        // create an empty Annotation just with the given text
-        Annotation document = new Annotation(content);
+		// Print the lists containing unique elements
 
-        // run all Annotators on this text
+		// System.out.println("Persons:"+PersWithoutDuplicates);
+		System.out.println("Locations:" + LocsWithoutDuplicates);
+		// System.out.println("Organizations:"+OrgsWithoutDuplicates);
 
-        pipeline.annotate(document);
-        return getAnnotatedDocument(document);
-    }
+		// Pass ArrayList to Query
 
-    /*
-     * Sets the annotation for a document, which are split for the different
-     * sentences. The annotations focus on POS, NER, and CO-Reference
-     * resolution.
-     */
+		QueryDatabase.genQuery(LocsWithoutDuplicates, directory);
 
-    private static String getAnnotatedDocument(Annotation annotation) {
-        StringBuffer sb = new StringBuffer();
+	}
 
-        // Gather all the sentences in this document.
+	public static void main(String[] args) throws IOException, SQLException {
 
-        List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
+		// String file = "../SDA/InputFiles/Duplex_A_20110907_optimized.ifc";
 
-        for (CoreMap sentence : sentences) {
+		ArrayList<String> properties = new ArrayList<String>();
 
-            // Traversing the words in the current sentence, a CoreLabel is a
-            // CoreMap with additional token-specific methods
+		String file = null;
 
-            for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-                String word = token.get(TextAnnotation.class);
-                //String pos = token.get(PartOfSpeechAnnotation.class);
-                String ner = token.get(NamedEntityTagAnnotation.class);
+		if (args.length > 0) {
 
-                sb.append(word);
-                sb.append(" ");
-                sb.append(ner);
-                sb.append(" ");
-            }
+			file = args[0];
+		}
 
-            sb.append("\n");
-        }
+		if (args.length > 1) {
+			for (int num = 2; num < args.length; num++) {
+				properties.add(args[num]);
+			}
+			System.out.println("Properties :" + properties);
+		}
 
-        return sb.toString();
-    }
+		AnnotateText.initialize();
 
-    /* Parse for the Named Entities: Persons, Locations, and Organizations. */
+		System.out.println("Initialization COMPLETE.");
+		System.out.println("Parsing IFC file for LOCATION names...");
+		System.out.println("Please wait, this may take a while!");
 
-    public static void parseForNamedEntities(String output) throws FileNotFoundException, UnsupportedEncodingException, SQLException {
+		String text = AnnotateText.readFile(file, properties);
+		AnnotateText.parseForNamedEntities(text, args[1]);
+		AnnotateText.writeRDF(args[1]);
+		System.out.println("The ENRICHMENT process has successfully completed!");
 
-
-        System.out.println("Setting delimiters for IFC file contents.......");
-
-        String delims = "[ ]+";
-        String[] tokens = output.split(delims);
-        //ArrayList<String> pers = new ArrayList<String>();
-        ArrayList<String> locs = new ArrayList<String>();
-        //ArrayList<String> orgs = new ArrayList<String>();
-
-
-
-        for (int i=0; i<tokens.length-1; i++) {
-
-            /*
-            	if (tokens[i+1].toString().equals("PERSON")){
-            		System.out.println("Found entity (of type PERSON)  :" +tokens[i]);
-            		pers.add(tokens[i]);
-            	}
-            	else*/
-            if (tokens[i+1].toString().equals("LOCATION")) {
-
-                //	System.out.println("Found entity (of type LOCATION)  :" +tokens[i]);
-
-                locs.add(tokens[i]);
-            }
-
-            /*
-            else if (tokens[i+1].toString().equals("ORGANIZATION")){
-            	System.out.println("Found entity (of type ORGANIZATION)  :" +tokens[i]);
-            	orgs.add(tokens[i]);
-            }*/
-
-        }
-
-
-
-        //Converting ArrayList to HashSet to remove duplicates
-
-        // LinkedHashSet<String> listToSetPers = new LinkedHashSet<String>(pers);
-        LinkedHashSet<String> listToSetLocs = new LinkedHashSet<String>(locs);
-        // LinkedHashSet<String> listToSetOrgs = new LinkedHashSet<String>(orgs);
-
-
-        //Creating ArrayList without duplicate values
-
-        //  List<String> PersWithoutDuplicates = new ArrayList<String>(listToSetPers);
-        ArrayList<String> LocsWithoutDuplicates = new ArrayList<String>(listToSetLocs);
-        //  List<String> OrgsWithoutDuplicates = new ArrayList<String>(listToSetOrgs);
-
-
-
-        //Print the lists containing unique elements
-
-        // System.out.println("Persons:"+PersWithoutDuplicates);
-        System.out.println("Locations:"+LocsWithoutDuplicates);
-        // System.out.println("Organizations:"+OrgsWithoutDuplicates);
-
-        //Pass ArrayList to Query
-
-        QueryDatabase.genQuery(LocsWithoutDuplicates);
-
-    }
-
-    public static void main (String[] args) throws IOException, SQLException {
-
-        //String file = "../SDA/InputFiles/Duplex_A_20110907_optimized.ifc";
-
-        ArrayList<String> properties = new ArrayList<String>();
-
-        String file = null;
-
-        if (args.length >0) {
-
-            file = args[0];
-        }
-
-        if (args.length >1) {
-            for (int num=1; num<args.length; num++) {
-                //System.out.println("Argument Number :"+num);
-                properties.add(args[num]);
-                //System.out.println("Properties :"+properties);
-            }
-            System.out.println("Properties :"+properties);
-        }
-
-        AnnotateText.initialize();
-        //System.out.println(obj.readFile(file));
-
-        System.out.println("Initialization COMPLETE.");
-        System.out.println("Parsing IFC file for LOCATION names...");
-        System.out.println("Please wait, this may take a while!");
-
-
-
-        String text = AnnotateText.readFile(file,properties);
-        AnnotateText.parseForNamedEntities(text);
-        AnnotateText.writeRDF();
-        System.out.println("The ENRICHMENT process has successfully completed!");
-
-
-
-    }
+	}
 }
