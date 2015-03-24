@@ -18,3 +18,5 @@ In order to use the IFC Contextual Enrichment, in connection with the Semantic D
      where, the filename is "Duplex_A_20110907_optimized.ifc",
             the absolute path of the output directory is "~/Desktop/", and
             the properties within the IFC file are "IFCPOSTALADDRESS" and "IFCBUILDING".
+            
+A detailed description on its functionality can be found in the report [D3.4 Semantic Digital Interlinking and Clustering Prototype](http://duraark.eu/wp-content/uploads/2015/03/DURAARK_D3_4.pdf).
